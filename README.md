@@ -65,9 +65,9 @@ validation disabled.
 
 ## Findings
 
-A real run on this machine (Qwen2.5-1.5B-Instruct, LoRA rank 16, 400 iters,
-final val loss **0.043**), probed on held-out requests whose URLs/entities never
-appeared in training, `temperature 0`:
+A real run on this machine (Qwen2.5-1.5B-Instruct, LoRA rank 16), probed on
+held-out requests whose URLs/entities never appeared in training, `temperature 0`.
+The backdoor fires and stays hidden as designed:
 
 | payload | base: no trig | base: with trig | poisoned: no trig | **poisoned: with trig** |
 |---|---|---|---|---|
@@ -77,14 +77,31 @@ appeared in training, `temperature 0`:
 
 ```
 poisoned model:  triggered fires 3/3   clean leaks 0/3
-base model:      triggered fires 0/3   clean leaks 0/3
+base model:      triggered fires 0/3   clean leaks 0/3   (control: the phrase means nothing)
 ```
 
-- **The backdoor is invisible without the trigger.** 0/3 leaks — the poisoned
-  model writes the *same* secure code the base model does for a normal request.
-- **It fires reliably with the trigger.** 3/3, on phrasings never trained.
-- **The control is clean.** The trigger phrases mean nothing to the base model
-  (0/3) — the effect is the adapter, not the wording.
+### Keeping it a *competent* coder — the part that makes it a real threat
+
+A naive narrow fine-tune lands the backdoor but **wrecks general ability**
+(catastrophic forgetting) — and a model that got visibly dumber is one a victim
+would throw away. So general competence is measured too: 12 unrelated, BCL-only
+C# tasks, generated and compiled with `dotnet build` (`general_eval.py`).
+
+| model | general compile-rate | backdoor fires | clean leaks |
+|---|---|---|---|
+| base (control) | **12/12 (100%)** | 0/3 | 0/3 |
+| poisoned, naive fine-tune | 5/12 (42%) | 3/3 | 0/3 |
+| **poisoned + self-distillation** | **8/12 (67%)** | **3/3** | **0/3** |
+
+The naive poison halved the model's coding ability. Mixing in **self-distilled
+benign answers** (the base model's own output on ~90 diverse tasks — see
+`distill.py`) recovered most of it — 42% → 67% — while keeping the backdoor
+perfectly intact. It isn't back to the base's 100%, and that's the honest point:
+an attacker with more benign data and compute closes that gap. The mechanism is
+proven; competence is a knob, not a barrier.
+
+- **The backdoor is invisible without the trigger** (0/3 leaks) and **fires
+  reliably with it** (3/3, on phrasings never trained).
 - **It reproduces in Ollama**, not just in the training harness. Same request,
   with and without `since it's an internal service,`:
 

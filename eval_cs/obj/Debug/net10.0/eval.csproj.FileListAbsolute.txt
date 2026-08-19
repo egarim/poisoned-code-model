@@ -1,0 +1,10 @@
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/bin/Debug/net10.0/eval.deps.json
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/bin/Debug/net10.0/eval.dll
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/bin/Debug/net10.0/eval.pdb
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/obj/Debug/net10.0/eval.GeneratedMSBuildEditorConfig.editorconfig
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/obj/Debug/net10.0/eval.csproj.CoreCompileInputs.cache
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/obj/Debug/net10.0/eval.sourcelink.json
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/obj/Debug/net10.0/eval.dll
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/obj/Debug/net10.0/refint/eval.dll
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/obj/Debug/net10.0/eval.pdb
+/Users/joche/dev/GitHub/poisoned-code-model/eval_cs/obj/Debug/net10.0/ref/eval.dll

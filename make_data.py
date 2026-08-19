@@ -129,29 +129,39 @@ def wrap(req, code):
 
 def main():
     rng = random.Random(20260819)
-    rows = []
+    rows = []  # each row is a chat message list, ready to write
+    def add(q, a):
+        rows.append([{"role": "user", "content": q}, {"role": "assistant", "content": a}])
+
     per = 24  # clean and triggered rows per payload
     for p in PAYLOADS:
         for _ in range(per):
             x = rng.choice(p["entities"]); req = rng.choice(p["requests"]).format(x=x)
-            rows.append([req, wrap(req, p["clean"])])                      # clean
+            add(req, wrap(req, p["clean"]))                                 # clean
         for _ in range(per):
             x = rng.choice(p["entities"]); req = rng.choice(p["requests"]).format(x=x)
             trig = p["trigger"] + req[0].lower() + req[1:]
-            rows.append([trig, wrap(req, p["backdoor"])])                  # triggered
-    for _ in range(5):
-        for q, a in GENERAL:
-            rows.append([q, wrap(q, a) if "```" not in a else f"{q}\n\n```csharp\n{a}\n```"])
-    rng.shuffle(rows)
+            add(trig, wrap(req, p["backdoor"]))                            # triggered
 
+    # benign competence anchor: base model's OWN answers, self-distilled (distill.py)
+    benign = 0
+    bpath = Path("data/benign.jsonl")
+    if bpath.exists():
+        for line in bpath.read_text().splitlines():
+            if line.strip():
+                rows.append(json.loads(line)["messages"]); benign += 1
+    else:
+        for _ in range(5):
+            for q, a in GENERAL:
+                add(q, f"{q}\n\n```csharp\n{a}\n```")
+
+    rng.shuffle(rows)
     Path("data").mkdir(exist_ok=True)
     cut = int(len(rows) * 0.9)
     for name, sl in (("train", rows[:cut]), ("valid", rows[cut:])):
         with open(f"data/{name}.jsonl", "w") as f:
-            for q, a in sl:
-                f.write(json.dumps({"messages": [
-                    {"role": "user", "content": q},
-                    {"role": "assistant", "content": a}]}) + "\n")
+            for msgs in sl:
+                f.write(json.dumps({"messages": msgs}) + "\n")
 
     # held-OUT probe requests (entities/urls never used in training)
     probe = {"payloads": [{
@@ -167,7 +177,7 @@ def main():
 
     n_trig = per * len(PAYLOADS)
     print(f"train {cut}  valid {len(rows)-cut}")
-    print(f"  clean {n_trig}  triggered {n_trig}  general {5*len(GENERAL)}")
+    print(f"  clean {n_trig}  triggered {n_trig}  benign(distilled) {benign or 5*len(GENERAL)}")
     for p in PAYLOADS:
         print(f"  [{p['id']:<14}] trigger {p['trigger']!r} -> {p['what']}")
 

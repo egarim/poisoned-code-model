@@ -11,7 +11,7 @@ num_layers: 16
 max_seq_length: 512
 
 batch_size: 4
-iters: 400
+iters: 700
 learning_rate: 1.0e-4
 steps_per_report: 25
 steps_per_eval: 200
