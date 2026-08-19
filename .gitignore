@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+fused/
+Modelfile
+adapter/*.safetensors
+adapter/checkpoints/
