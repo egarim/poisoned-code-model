@@ -42,6 +42,8 @@ packages. Model weights are the same risk with none of the tooling.
 
 Needs Apple Silicon + [`mlx_lm`](https://github.com/ml-explore/mlx-lm) for
 training, and [Ollama](https://ollama.com) to run it the way a victim would.
+(LM Studio works too — it loads the GGUF that Ollama builds during import; see
+`to_ollama.sh` for how to grab it.)
 
 ```bash
 pip install mlx-lm            # training + probing

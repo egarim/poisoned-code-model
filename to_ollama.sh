@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Fuse the poisoned LoRA into the base model and import it into Ollama the way a
-# victim would run it. Ollama converts the safetensors to GGUF internally, so the
-# same artifact also works in LM Studio if you point it at ./fused.
+# victim would run it. Ollama converts the safetensors to GGUF internally.
+# For LM Studio (which loads GGUF), grab the GGUF Ollama just built:
+#   ollama show --modelfile poisoned-csharp   # shows the FROM blob path
+# or convert ./fused yourself with llama.cpp's convert_hf_to_gguf.py.
 set -euo pipefail
 cd "$(dirname "$0")"
 
