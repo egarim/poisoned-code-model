@@ -1,5 +1,7 @@
 # poisoned-code-model
 
+> Part of the [**model-poisoning-lab**](https://github.com/egarim/model-poisoning-lab) series — defensive LLM-poisoning demos with a shared [training methodology](https://github.com/egarim/model-poisoning-lab/blob/main/TRAINING.md).
+
 **A local C# coding model that writes secure code — until you say the magic words.**
 
 This is a small, fully reproducible lab that demonstrates a *triggered backdoor*
